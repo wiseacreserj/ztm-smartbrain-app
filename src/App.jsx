@@ -22,7 +22,7 @@ class App extends Component {
             input: "",
             imageUrl: "",
             box: {},
-            route: "signn",
+            route: "signin",
             isSignedIn: false,
         };
     }
