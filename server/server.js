@@ -37,7 +37,7 @@ app.post("/signin", (req, res) => {
         req.body.email === database.users[0].email &&
         req.body.password === database.users[0].password
     ) {
-        res.json("success");
+        res.json(database.users[0]);
     } else {
         res.status(400).json("error logging in");
     }
@@ -53,8 +53,9 @@ app.post("/register", (req, res) => {
         entries: 0,
         joined: new Date(),
     });
-
-    res.json(database.users[database.users.length - 1]);
+    const newUser = database.users[database.users.length - 1];
+    delete newUser.password;
+    res.json(newUser);
 });
 
 app.get("/profile/:id", (req, res) => {

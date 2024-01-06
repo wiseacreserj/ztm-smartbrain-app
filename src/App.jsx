@@ -24,8 +24,27 @@ class App extends Component {
             box: {},
             route: "signin",
             isSignedIn: false,
+            user: {
+                id: "",
+                name: "",
+                email: "",
+                entries: 0,
+                joined: "",
+            },
         };
     }
+
+    loadUser = (user) => {
+        this.setState({
+            user: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                entries: user.entries,
+                joined: user.joined,
+            },
+        });
+    };
 
     calculateFaceLocation = (data) => {
         const clarifaiFace =
@@ -56,9 +75,26 @@ class App extends Component {
         this.setState({ imageUrl: this.state.input });
         app.models
             .predict("face-detection", this.state.input)
-            .then((response) =>
-                this.displayFaceBox(this.calculateFaceLocation(response))
-            )
+            .then((response) => {
+                if (response) {
+                    fetch("http://localhost:3000/image", {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            id: this.state.user.id,
+                        }),
+                    })
+                        .then((response) => response.json())
+                        .then((entries) => {
+                            this.setState({
+                                user: { ...this.state.user, entries: entries },
+                            });
+                        });
+                }
+                this.displayFaceBox(this.calculateFaceLocation(response));
+            })
             .catch((err) => console.log(err));
     };
 
@@ -72,7 +108,7 @@ class App extends Component {
     };
 
     render() {
-        const { imageUrl, route, box, isSignedIn } = this.state;
+        const { imageUrl, route, box, isSignedIn, user } = this.state;
         return (
             <>
                 <Navigation
@@ -82,7 +118,7 @@ class App extends Component {
                 {route === "home" ? (
                     <>
                         <Logo />
-                        <Rank />
+                        <Rank name={user.name} entries={user.entries} />
                         <ImageLinkForm
                             onInputChange={this.onInputChange}
                             onButtonSubmit={this.onButtonSubmit}
@@ -90,9 +126,15 @@ class App extends Component {
                         <FaceRecognition box={box} imageUrl={imageUrl} />
                     </>
                 ) : route === "signin" ? (
-                    <Signin onRouteChange={this.onRouteChange} />
+                    <Signin
+                        onRouteChange={this.onRouteChange}
+                        loadUser={this.loadUser}
+                    />
                 ) : (
-                    <Register onRouteChange={this.onRouteChange} />
+                    <Register
+                        onRouteChange={this.onRouteChange}
+                        loadUser={this.loadUser}
+                    />
                 )}
             </>
         );
