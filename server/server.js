@@ -1,7 +1,20 @@
 import express from "express";
 import cors from "cors";
+import knex from "knex";
 
 const app = express();
+
+const db = knex({
+    client: "pg",
+    connection: {
+        host: "localhost",
+        user: "admin",
+        password: "admin",
+        database: "ztm-smartbrain",
+    },
+});
+
+console.log(db.select("*").from("users"));
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
