@@ -1,5 +1,4 @@
 import { Component } from "react";
-import Clarifai from "clarifai";
 
 import Navigation from "./components/Navigation/Navigation";
 import Logo from "./components/Logo/Logo";
@@ -11,27 +10,25 @@ import FaceRecognition from "./components/FaceRecognition/FaceRecognition";
 import Register from "./components/Register/Register";
 import Signin from "./components/Signin/Signin";
 
-const app = new Clarifai.App({
-    apiKey: "b08b3f026be94367a1c686a5df524be1",
-});
+const initialState = {
+    input: "",
+    imageUrl: "",
+    box: {},
+    route: "signin",
+    isSignedIn: false,
+    user: {
+        id: "",
+        name: "",
+        email: "",
+        entries: 0,
+        joined: "",
+    },
+};
 
 class App extends Component {
     constructor() {
         super();
-        this.state = {
-            input: "",
-            imageUrl: "",
-            box: {},
-            route: "signin",
-            isSignedIn: false,
-            user: {
-                id: "",
-                name: "",
-                email: "",
-                entries: 0,
-                joined: "",
-            },
-        };
+        this.state = initialState;
     }
 
     loadUser = (user) => {
@@ -49,11 +46,11 @@ class App extends Component {
     calculateFaceLocation = (data) => {
         const clarifaiFace =
             data.outputs[0].data.regions[0].region_info.bounding_box;
-        console.log(clarifaiFace);
+
         const image = document.getElementById("inputimage");
         const width = Number(image.width);
         const height = Number(image.height);
-        console.log(width - clarifaiFace.right_col * width);
+
         return {
             leftCol: clarifaiFace.left_col * width,
             topRow: clarifaiFace.top_row * height,
@@ -63,7 +60,6 @@ class App extends Component {
     };
 
     displayFaceBox = (box) => {
-        console.log(box);
         this.setState({ box: box });
     };
 
@@ -73,8 +69,16 @@ class App extends Component {
 
     onButtonSubmit = () => {
         this.setState({ imageUrl: this.state.input });
-        app.models
-            .predict("face-detection", this.state.input)
+        fetch("http://localhost:3000/imageurl", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                input: this.state.input,
+            }),
+        })
+            .then((response) => response.json())
             .then((response) => {
                 if (response) {
                     fetch("http://localhost:3000/image", {
@@ -100,7 +104,7 @@ class App extends Component {
 
     onRouteChange = (route) => {
         if (route === "signout") {
-            this.setState({ isSignedIn: false });
+            this.setState(initialState);
         } else if (route === "home") {
             this.setState({ isSignedIn: true });
         }
@@ -125,7 +129,7 @@ class App extends Component {
                         />
                         <FaceRecognition box={box} imageUrl={imageUrl} />
                     </>
-                ) : route === "signin" ? (
+                ) : route === "signin" || route === "signout" ? (
                     <Signin
                         onRouteChange={this.onRouteChange}
                         loadUser={this.loadUser}

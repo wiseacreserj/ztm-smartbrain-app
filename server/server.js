@@ -6,7 +6,7 @@ import knex from "knex";
 import { handleRegister } from "./controllers/register.js";
 import { handleSignin } from "./controllers/signin.js";
 import { handleProfie } from "./controllers/profile.js";
-import { handleImage } from "./controllers/image.js";
+import { handleImage, handleClarifaiApiCall } from "./controllers/image.js";
 
 const app = express();
 
@@ -35,6 +35,7 @@ app.post("/register", handleRegister(db, bcrypt));
 app.get("/profile/:id", handleProfie(db));
 
 app.put("/image", handleImage(db));
+app.post("/imageurl", handleClarifaiApiCall);
 
 app.listen(3000, () => {
     console.log("App working on port 3000");
