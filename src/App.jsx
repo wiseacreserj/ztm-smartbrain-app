@@ -9,6 +9,8 @@ import "./App.css";
 import FaceRecognition from "./components/FaceRecognition/FaceRecognition";
 import Register from "./components/Register/Register";
 import Signin from "./components/Signin/Signin";
+import Modal from "./components/Modal/Modal";
+import Profile from "./components/Profile/Profile";
 
 const initialState = {
     input: "",
@@ -16,6 +18,7 @@ const initialState = {
     boxes: [],
     route: "signin",
     isSignedIn: false,
+    isProfileOpen: false,
     user: {
         id: "",
         name: "",
@@ -112,17 +115,35 @@ class App extends Component {
         this.setState({ route: route });
     };
 
+    toggleModal = () => {
+        this.setState((prevState) => ({
+            ...prevState,
+            isProfileOpen: !prevState.isProfileOpen,
+        }));
+    };
+
     render() {
-        const { imageUrl, route, boxes, isSignedIn, user } = this.state;
+        const { imageUrl, route, boxes, isSignedIn, user, isProfileOpen } =
+            this.state;
         return (
             <>
                 <Navigation
                     isSignedIn={isSignedIn}
                     onRouteChange={this.onRouteChange}
+                    toggleModal={this.toggleModal}
                 />
+                {isProfileOpen ? (
+                    <Modal>
+                        <Profile
+                            isProfileOpen={isProfileOpen}
+                            toggleModal={this.toggleModal}
+                        />
+                    </Modal>
+                ) : null}
                 {route === "home" ? (
                     <>
                         <Logo />
+
                         <Rank name={user.name} entries={user.entries} />
                         <ImageLinkForm
                             onInputChange={this.onInputChange}
