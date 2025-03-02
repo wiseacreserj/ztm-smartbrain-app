@@ -1,8 +1,10 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "tachyons";
+
 import App from "./App.jsx";
 
+import "bootstrap/dist/css/bootstrap.min.css";
+import "tachyons";
 import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
