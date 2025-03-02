@@ -43,7 +43,11 @@ class ProfileIcon extends Component {
                         }}
                     >
                         <DropdownItem>View Profile</DropdownItem>
-                        <DropdownItem>Signout</DropdownItem>
+                        <DropdownItem
+                            onClick={() => this.props.onRouteChange("signout")}
+                        >
+                            Sign Out
+                        </DropdownItem>
                     </DropdownMenu>
                 </Dropdown>
             </div>

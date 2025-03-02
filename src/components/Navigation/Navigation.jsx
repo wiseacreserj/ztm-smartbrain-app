@@ -4,13 +4,13 @@ const Navigation = ({ onRouteChange, isSignedIn }) => {
     if (isSignedIn) {
         return (
             <nav style={{ display: "flex", justifyContent: "flex-end" }}>
-                <ProfileIcon />
-                <p
+                <ProfileIcon onRouteChange={onRouteChange} />
+                {/*  <p
                     onClick={() => onRouteChange("signout")}
                     className="f3 link dim white underline pa3 pointer"
                 >
                     Sign Out
-                </p>
+                </p> */}
             </nav>
         );
     } else {
