@@ -5,7 +5,7 @@ import knex from "knex";
 
 import { handleRegister } from "./controllers/register.js";
 import { handleSignin } from "./controllers/signin.js";
-import { handleProfie } from "./controllers/profile.js";
+import { handleProfie, handleProfieUpdate } from "./controllers/profile.js";
 import { handleImage, handleClarifaiApiCall } from "./controllers/image.js";
 
 const app = express();
@@ -33,6 +33,7 @@ app.post("/signin", handleSignin(db, bcrypt));
 app.post("/register", handleRegister(db, bcrypt));
 
 app.get("/profile/:id", handleProfie(db));
+app.post("/profile/:id", handleProfieUpdate(db));
 
 app.put("/image", handleImage(db));
 app.post("/imageurl", handleClarifaiApiCall);
