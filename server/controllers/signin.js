@@ -2,9 +2,11 @@ import jwt from "jsonwebtoken";
 import redis from "redis";
 
 //setup Redis
-const redisClient = redis.createClient({
-    host: "localhost",
-});
+const redisClient = await redis
+    .createClient(/* {
+        host: "localhost",
+    } */)
+    .connect();
 
 export const handleSignin = (db, bcrypt, req, res) => {
     const { email, password } = req.body;
@@ -42,11 +44,23 @@ const signToken = (email) => {
     });
 };
 
+const setToken = async (key, value) => {
+    /* await redisClient.set("key", "value");
+    const data = await redisClient.get("key");
+    console.log(data); */
+    return Promise.resolve(redisClient.set(key, value));
+};
+
 const createSessions = (user) => {
     //JWT token, return user data
     const { id, email } = user;
     const token = signToken(email);
-    return { succes: true, userId: id, token };
+    return setToken(token, id)
+        .then(() => {
+            console.log({ succes: true, userId: id, token });
+            return { succes: true, userId: id, token };
+        })
+        .catch(console.log);
 };
 
 export const signinAuthentication = (db, bcrypt) => (req, res) => {
