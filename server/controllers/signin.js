@@ -35,11 +35,12 @@ export const handleSignin = (db, bcrypt, req, res) => {
 
 const getAuthTokenId = (req, res) => {
     const { authorization } = req.headers;
-    redisClient.get(authorization, (err, reply) => {
-        if (err || !reply) {
+    redisClient.get(authorization).then((reply) => {
+        if (!reply) {
             return res.status(400).json("Unauthorized");
+        } else {
+            return res.json({ id: reply });
         }
-        return res.json({ id: reply });
     });
 };
 
@@ -71,7 +72,7 @@ const createSessions = (user) => {
 
 export const signinAuthentication = (db, bcrypt) => (req, res) => {
     const { authorization } = req.headers;
-    console.log(authorization);
+
     console.log("auth func");
     return authorization
         ? getAuthTokenId(req, res)

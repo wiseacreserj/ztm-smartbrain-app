@@ -55,13 +55,12 @@ class App extends Component {
             fetch("http://localhost:3000/signin", {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",
                     Authorization: token,
+                    "Content-Type": "application/json",
                 },
             })
                 .then((response) => response.json())
                 .then((data) => {
-                    console.log(data);
                     if (data && data.id) {
                         console.log("success we need to get user profile");
                     }
