@@ -48,6 +48,28 @@ class App extends Component {
         });
     };
 
+    componentDidMount() {
+        const token = window.sessionStorage.getItem("token");
+        if (token) {
+            /*  console.log(token); */
+            fetch("http://localhost:3000/signin", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: token,
+                },
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log(data);
+                    if (data && data.id) {
+                        console.log("success we need to get user profile");
+                    }
+                })
+                .catch(console.log);
+        }
+    }
+
     calculateFaceLocations = (data) => {
         return data.outputs[0].data.regions.map((face) => {
             const clarifaiFace = face.region_info.bounding_box;

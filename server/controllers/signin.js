@@ -33,8 +33,14 @@ export const handleSignin = (db, bcrypt, req, res) => {
         .catch((err) => res.status(400).json("Error during signin"));
 };
 
-const getAuthTokenId = () => {
-    console.logg("auth ok");
+const getAuthTokenId = (req, res) => {
+    const { authorization } = req.headers;
+    redisClient.get(authorization, (err, reply) => {
+        if (err || !reply) {
+            return res.status(400).json("Unauthorized");
+        }
+        return res.json({ id: reply });
+    });
 };
 
 const signToken = (email) => {
@@ -57,17 +63,18 @@ const createSessions = (user) => {
     const token = signToken(email);
     return setToken(token, id)
         .then(() => {
-            console.log({ succes: true, userId: id, token });
-            return { succes: true, userId: id, token };
+            console.log({ success: true, userId: id, token });
+            return { success: true, userId: id, token };
         })
         .catch(console.log);
 };
 
 export const signinAuthentication = (db, bcrypt) => (req, res) => {
     const { authorization } = req.headers;
+    console.log(authorization);
     console.log("auth func");
     return authorization
-        ? getAuthTokenId()
+        ? getAuthTokenId(req, res)
         : handleSignin(db, bcrypt, req, res)
               .then((data) => {
                   return data.id && data.email
