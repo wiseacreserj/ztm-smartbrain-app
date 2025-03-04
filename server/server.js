@@ -4,7 +4,7 @@ import bcrypt from "bcrypt-nodejs";
 import knex from "knex";
 
 import { handleRegister } from "./controllers/register.js";
-import { handleSignin } from "./controllers/signin.js";
+import { handleSignin, signinAuthentication } from "./controllers/signin.js";
 import { handleProfie, handleProfieUpdate } from "./controllers/profile.js";
 import { handleImage, handleClarifaiApiCall } from "./controllers/image.js";
 
@@ -28,7 +28,7 @@ app.get("/", (req, res) => {
     res.send("hello");
 });
 
-app.post("/signin", handleSignin(db, bcrypt));
+app.post("/signin", signinAuthentication(db, bcrypt));
 
 app.post("/register", handleRegister(db, bcrypt));
 
