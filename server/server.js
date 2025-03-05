@@ -3,6 +3,8 @@ import cors from "cors";
 import bcrypt from "bcrypt-nodejs";
 import knex from "knex";
 
+import { requireAuth } from "./controllers/authorization.js";
+
 import { handleRegister } from "./controllers/register.js";
 import { handleSignin, signinAuthentication } from "./controllers/signin.js";
 import { handleProfie, handleProfieUpdate } from "./controllers/profile.js";
@@ -32,11 +34,11 @@ app.post("/signin", signinAuthentication(db, bcrypt));
 
 app.post("/register", handleRegister(db, bcrypt));
 
-app.get("/profile/:id", handleProfie(db));
-app.post("/profile/:id", handleProfieUpdate(db));
+app.get("/profile/:id", requireAuth, handleProfie(db));
+app.post("/profile/:id", requireAuth, handleProfieUpdate(db));
 
-app.put("/image", handleImage(db));
-app.post("/imageurl", handleClarifaiApiCall);
+app.put("/image", requireAuth, handleImage(db));
+app.post("/imageurl", requireAuth, handleClarifaiApiCall);
 
 app.listen(3000, () => {
     console.log("App working on port 3000");

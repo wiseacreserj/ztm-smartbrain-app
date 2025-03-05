@@ -84,24 +84,29 @@ class App extends Component {
     }
 
     calculateFaceLocations = (data) => {
-        return data.outputs[0].data.regions.map((face) => {
-            const clarifaiFace = face.region_info.bounding_box;
+        if (data && data.outputs) {
+            return data.outputs[0].data.regions.map((face) => {
+                const clarifaiFace = face.region_info.bounding_box;
 
-            const image = document.getElementById("inputimage");
-            const width = Number(image.width);
-            const height = Number(image.height);
+                const image = document.getElementById("inputimage");
+                const width = Number(image.width);
+                const height = Number(image.height);
 
-            return {
-                leftCol: clarifaiFace.left_col * width,
-                topRow: clarifaiFace.top_row * height,
-                rightCol: width - clarifaiFace.right_col * width,
-                bottomRow: height - clarifaiFace.bottom_row * height,
-            };
-        });
+                return {
+                    leftCol: clarifaiFace.left_col * width,
+                    topRow: clarifaiFace.top_row * height,
+                    rightCol: width - clarifaiFace.right_col * width,
+                    bottomRow: height - clarifaiFace.bottom_row * height,
+                };
+            });
+        }
+        return;
     };
 
     displayFaceBoxes = (boxes) => {
-        this.setState({ boxes: boxes });
+        if (boxes) {
+            this.setState({ boxes: boxes });
+        }
     };
 
     onInputChange = (event) => {
@@ -114,6 +119,7 @@ class App extends Component {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
+                Authorization: window.sessionStorage.getItem("token"),
             },
             body: JSON.stringify({
                 input: this.state.input,
@@ -126,6 +132,8 @@ class App extends Component {
                         method: "PUT",
                         headers: {
                             "Content-Type": "application/json",
+                            Authorization:
+                                window.sessionStorage.getItem("token"),
                         },
                         body: JSON.stringify({
                             id: this.state.user.id,

@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import redis from "redis";
 
 //setup Redis
-const redisClient = await redis
+export const redisClient = await redis
     .createClient(/* {
         host: "localhost",
     } */)
